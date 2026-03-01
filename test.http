@@ -1,7 +1,37 @@
-POST http://localhost:8080/api/todos
+@baseUrl = http://localhost:8080/api/todos
+
+### 1. 创建一个新任务 (验证 POST)
+POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "name": "Test CI/CD",
+  "name": "学习 Spring Boot 异常处理",
   "finished": false
 }
+
+> {% client.global.set("new_id", response.body.id); %}
+
+### 2. 获取所有 Todo (验证 GET All)
+GET {{baseUrl}}
+Accept: application/json
+
+### 3. 获取刚才创建的任务 (验证 GET Single)
+GET {{baseUrl}}/{{new_id}}
+
+
+### 4. 局部更新状态 (验证 PATCH + 404 逻辑)
+PATCH {{baseUrl}}/{{new_id}}
+Content-Type: application/json
+
+{
+  "finished": true
+}
+
+
+### 5. 删除任务 (验证 DELETE + 204)
+DELETE {{baseUrl}}/{{new_id}}
+
+
+### 6. 测试 404 报错
+# 访问刚才被删掉的 ID，应该触发 ResourceNotFoundException
+GET {{baseUrl}}/{{new_id}}
